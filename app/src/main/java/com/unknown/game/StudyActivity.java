@@ -8,9 +8,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -47,6 +49,8 @@ public class StudyActivity extends AppCompatActivity {
 
     private boolean music;
 
+    private MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,19 +69,32 @@ public class StudyActivity extends AppCompatActivity {
         btnTrue = findViewById(R.id.btnTrue);
         btnFalse = findViewById(R.id.btnFalse);
 
+        music = true;
+        btnSetVolume = findViewById(R.id.btnSetVolume);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         score = 0;
 
         btnTrue.setOnClickListener(onClickListener);
         btnFalse.setOnClickListener(onClickListener);
 
-        initFreakingMath();
-
         tvTap = findViewById(R.id.tvTap);
         tvTap.setOnClickListener(tapToStart);
 
-        music = true;
-        btnSetVolume = findViewById(R.id.btnSetVolume);
         btnSetVolume.setOnClickListener(setVolumeOnClickListener);
+
+        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(StudyActivity.this, R.raw.sound_tiktok, 100);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setContentView(R.layout.activity_study);
+        onStart();
     }
 
     private void initFreakingMath() {
@@ -96,31 +113,44 @@ public class StudyActivity extends AppCompatActivity {
                 progressBarLeft.setProgress((int) s);
                 progressBarRight.setProgress((int) s);
 
-                SetBackgroundMusics.SetPlayBackgroundMusic(StudyActivity.this, R.raw.sound_tiktok, 100);
+                mediaPlayer.start();
             }
 
             @Override
             public void onFinish() {
                 timer.cancel();
+                SetBackgroundMusics.SetPauseMusic(mediaPlayer);
                 setEndGameLayout();
             }
         }.start();
     }
 
     private void setEndGameLayout() {
+        LayoutInflater inflater = StudyActivity.this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.mini_game_result_dialog, null);
+        setContentView(view);
+
         TextView tvYourScore = findViewById(R.id.tvYourScore);
         TextView tvHighScore = findViewById(R.id.tvHighScore);
 
-        sharedPreferences = getSharedPreferences("SCORE", MODE_PRIVATE);
-
         tvYourScore.setText(String.valueOf(score));
         tvHighScore.setText(String.valueOf(sharedPreferences.getInt("highScore", score)));
+
+        Button btnTryAgain = findViewById(R.id.btnTryAgain);
+        btnTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPreferences.edit().putInt("yourScore", sharedPreferences.getInt("yourScore", 0) + score);
+                sharedPreferences.edit().apply();
+                onRestart();
+            }
+        });
 
         Button btnContinue = findViewById(R.id.btnContinue);
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("petIndex", score));
+                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("petIndex", sharedPreferences.getInt("yourScore", score)));
                 finish();
             }
         });
@@ -143,12 +173,12 @@ public class StudyActivity extends AppCompatActivity {
                 if (score > sharedPreferences.getInt("highScore", 0)) {
                     sharedPreferences.edit().putInt("highScore", score);
                 }
-                playLayout.setVisibility(View.INVISIBLE);
-                endGameLayout = findViewById(R.id.endGameLayout);
-                endGameLayout.setVisibility(View.VISIBLE);
+                sharedPreferences.edit().putInt("yourScore", score);
+                //playLayout.setVisibility(View.INVISIBLE);
                 setEndGameLayout();
                 Log.e("res", String.valueOf(result));
             }
+            sharedPreferences.edit().apply();
         }
     };
 
@@ -158,6 +188,8 @@ public class StudyActivity extends AppCompatActivity {
             tvTap.setVisibility(View.INVISIBLE);
             playLayout = findViewById(R.id.playLayout);
             playLayout.setVisibility(View.VISIBLE);
+
+            initFreakingMath();
         }
     };
 
@@ -167,30 +199,32 @@ public class StudyActivity extends AppCompatActivity {
             if (music) {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_mute));
                 music = !music;
-                SetBackgroundMusics.SetMute();
+                Log.e("music", String.valueOf(music));
+                SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
             } else {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_volume));
                 music = !music;
-                SetBackgroundMusics.SetMaxVolume();
+                Log.e("music", String.valueOf(music));
+                SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
             }
         }
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        SetBackgroundMusics.SetResumeBackgroundMusic();
+    protected void onPause() {
+        super.onPause();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+    protected void onResume() {
+        super.onResume();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 }

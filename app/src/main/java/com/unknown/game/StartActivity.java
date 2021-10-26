@@ -18,6 +18,8 @@ public class StartActivity extends AppCompatActivity {
     private static final String PET_INFORMATION = "PET_INFORMATION";
     private static final String PET_NAME = "PET_NAME";
 
+    private MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,28 +27,26 @@ public class StartActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
-        SetBackgroundMusics.SetPlayBackgroundMusic(this, R.raw.background_music, 100);
+        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
+        mediaPlayer.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        SetBackgroundMusics.SetResumeBackgroundMusic();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 
     public void btnPlayGameOnClick(View view) {
@@ -75,23 +75,18 @@ public class StartActivity extends AppCompatActivity {
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
                         intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
                         startActivity(intent);
+                        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+                        finish();
                     }
                 }
             });
         }
         else {
-            Button btnCharacter = (Button) findViewById(R.id.btnCharacter);
-            btnCharacter.setVisibility(View.VISIBLE);
-            btnCharacter.setText(sharedPreferences.getString(PET_NAME, ""));
-
-            btnCharacter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                    intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
-                    startActivity(intent);
-                }
-            });
+            Intent intent = new Intent(StartActivity.this, MainActivity.class);
+            intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
+            startActivity(intent);
+            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            finish();
         }
     }
 }

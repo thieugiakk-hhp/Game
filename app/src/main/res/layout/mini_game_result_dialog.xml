@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background_study_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvStringYourScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Score"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:id="@+id/tvYourScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="100"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvStringYourScore"
+        app:layout_constraintStart_toStartOf="@+id/tvStringYourScore"
+        app:layout_constraintTop_toBottomOf="@+id/tvStringYourScore" />
+
+    <TextView
+        android:id="@+id/tvStringHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="High Score"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvYourScore"
+        app:layout_constraintStart_toStartOf="@+id/tvYourScore"
+        app:layout_constraintTop_toBottomOf="@+id/tvYourScore" />
+
+    <TextView
+        android:id="@+id/tvHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="100"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvStringHighScore"
+        app:layout_constraintStart_toStartOf="@+id/tvStringHighScore"
+        app:layout_constraintTop_toBottomOf="@+id/tvStringHighScore" />
+
+    <Button
+        android:id="@+id/btnTryAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Try Again"
+        android:textSize="32sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.675" />
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Continue"
+        android:textSize="32sp"
+        android:fontFamily="@font/icielbrandontext_bold"
+        app:layout_constraintEnd_toEndOf="@+id/btnTryAgain"
+        app:layout_constraintStart_toStartOf="@+id/btnTryAgain"
+        app:layout_constraintTop_toBottomOf="@+id/btnTryAgain" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

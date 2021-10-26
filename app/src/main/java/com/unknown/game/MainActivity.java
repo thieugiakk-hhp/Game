@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,7 +21,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String PET_HUNGRY = "PET_HUNGRY";
     private static final String PET_HEALTH = "PET_HEALTH";
 
-    private boolean music = true;
+    private boolean music;
+
+    private TextView tvNotiStt;
+
+    private CountDownTimer timer;
+
+    private MediaPlayer mediaPlayer;
+    
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,60 +38,57 @@ public class MainActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
-        SharedPreferences sharedPreferencesPetIn4= this.getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
-        GetPetData(sharedPreferencesPetIn4);
+        sharedPreferences = getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
+        GetPetData();
 
-        TextView tv = (TextView) findViewById(R.id.tvStt);
+        tvNotiStt = (TextView) findViewById(R.id.tvNotiStt);
+        music = true;
 
-        SetBackgroundMusics.SetPlayBackgroundMusic(MainActivity.this, R.raw.background_music, 100);
+        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
+        mediaPlayer.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        SetBackgroundMusics.SetResumeBackgroundMusic();
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        SetBackgroundMusics.SetPauseBackgroundMusic();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         int intExp = getIntent().getIntExtra("petIndex", 0);
-        float exp = (float) (Math.round(intExp / 2000 * 10) / 10);
-        int hungryIndex = (int) (Math.round(getIntent().getIntExtra("petIndex", 0) / 5));
-        int healthIndex = (int) (Math.round(getIntent().getIntExtra("petIndex", 0) / 5));
+        float exp = (float) intExp / 250;
+        int hungryIndex = (int) (getIntent().getIntExtra("petIndex", 0) / 5);
+        int healthIndex = (int) (getIntent().getIntExtra("petIndex", 0) / 5);
 
-        SharedPreferences sharedPreferencesPetIn4= this.getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
-        float currentLevel = sharedPreferencesPetIn4.getFloat(PET_LEVEL, 1f) + exp;
-        sharedPreferencesPetIn4.edit().putFloat(PET_LEVEL, currentLevel);
-        sharedPreferencesPetIn4.edit().putInt(PET_HUNGRY, sharedPreferencesPetIn4.getInt(PET_HUNGRY, 100) - hungryIndex);
-        sharedPreferencesPetIn4.edit().putInt(PET_HEALTH, sharedPreferencesPetIn4.getInt(PET_HEALTH, 100) - healthIndex);
+        float currentLevel = sharedPreferences.getFloat(PET_LEVEL, 1f) + exp;
+        sharedPreferences.edit().putFloat(PET_LEVEL, currentLevel);
+        sharedPreferences.edit().putInt(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 100) - hungryIndex);
+        sharedPreferences.edit().putInt(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 100) - healthIndex);
 
-        sharedPreferencesPetIn4.edit().apply();
+        sharedPreferences.edit().apply();
     }
 
     public void btnIn4OnClick(View view) {
-        SharedPreferences sharedPreferencesPetIn4= this.getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
         Intent intent = new Intent(MainActivity.this, PetIn4Activity.class);
-        intent.putExtra(PET_NAME, sharedPreferencesPetIn4.getString(PET_NAME, ""));
-        intent.putExtra(PET_LEVEL, sharedPreferencesPetIn4.getFloat(PET_LEVEL, 5f));
-        intent.putExtra(PET_MONEY, sharedPreferencesPetIn4.getInt(PET_MONEY, 24));
-        intent.putExtra(PET_HUNGRY, sharedPreferencesPetIn4.getInt(PET_HUNGRY, 75));
-        intent.putExtra(PET_HEALTH, sharedPreferencesPetIn4.getInt(PET_HEALTH, 75));
+        intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
+        intent.putExtra(PET_LEVEL, sharedPreferences.getFloat(PET_LEVEL, 5f));
+        intent.putExtra(PET_MONEY, sharedPreferences.getInt(PET_MONEY, 24));
+        intent.putExtra(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 75));
+        intent.putExtra(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 75));
         startActivity(intent);
     }
 
@@ -88,18 +96,23 @@ public class MainActivity extends AppCompatActivity {
         if (music) {
             view.setBackground(getDrawable(R.drawable.ic_mute));
             music = !music;
-            SetBackgroundMusics.SetMute();
-        } else {
+            Log.e("music", String.valueOf(music));
+            SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
+        }
+
+        else if (!music) {
             view.setBackground(getDrawable(R.drawable.ic_volume));
             music = !music;
-            SetBackgroundMusics.SetMaxVolume();
+            Log.e("music", String.valueOf(music));
+            SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
         }
     }
 
     public void btnStudyOnClick(View view) {
         Intent intent = new Intent(MainActivity.this, StudyActivity.class);
-        startActivity(intent);
         finish();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        startActivity(intent);
     }
 
     public void btnPlayOnClick(View view) {
@@ -107,17 +120,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnEatingOnClick(View view) {
+        if (sharedPreferences.getInt(PET_MONEY, 0) >= 1000) {
+            if (sharedPreferences.getInt(PET_HUNGRY, 0) < 70) {
+                if (sharedPreferences.getInt(PET_HUNGRY, 100) + 50 > 100) {
+                    SetTimeTextViewNoti("Tiền: -1000, " + "Độ no của " + sharedPreferences.getString(PET_NAME, "") + " đã đầy");
+                    sharedPreferences.edit().putInt(PET_HUNGRY,  100);
+                } else {
+                    SetTimeTextViewNoti("Tiền: -1000, Độ no + 50");
+                    sharedPreferences.edit().putInt(PET_HUNGRY,  sharedPreferences.getInt(PET_HUNGRY, 100) + 50);
+                }
+            } else {
+                SetTimeTextViewNoti(sharedPreferences.getString(PET_NAME, "") + " đã no bụng");
+            }
+        } else {
+            SetTimeTextViewNoti("Bạn không đủ tiền để mua thức ăn");
+        }
 
+        sharedPreferences.edit().apply();
     }
 
     public void btnHealingOnClick(View view) {
 
     }
 
-    private void GetPetData(SharedPreferences sharedPreferences) {
+    private void GetPetData() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Intent intent = getIntent();
-        editor.putString(PET_NAME, intent.getStringExtra(PET_NAME));
+
+        if (sharedPreferences.getString(PET_NAME, "") == "") {
+            editor.putString(PET_NAME, getIntent().getStringExtra(PET_NAME));
+        }
         if (sharedPreferences.getFloat(PET_LEVEL, -1) == -1) {
             editor.putFloat(PET_LEVEL, 1f);
         }
@@ -132,5 +163,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         editor.apply();
+    }
+
+    private void SetTimeTextViewNoti(String str) {
+        timer = new CountDownTimer(10000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long s = millisUntilFinished / 1000;
+                tvNotiStt.setText(str);
+                tvNotiStt.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFinish() {
+                timer.cancel();
+                tvNotiStt.setVisibility(View.INVISIBLE);
+            }
+        }.start();
     }
 }

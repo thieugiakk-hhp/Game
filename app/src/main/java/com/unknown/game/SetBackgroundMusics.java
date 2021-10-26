@@ -5,29 +5,24 @@ import android.media.MediaPlayer;
 
 public class SetBackgroundMusics {
 
-    private static MediaPlayer mediaPlayer;
-
-    public static void SetPlayBackgroundMusic(Context context, int musicId, float volume) {
-        mediaPlayer = MediaPlayer.create(context, musicId);
+    public static MediaPlayer SetBackgroundMusic(Context context, int musicId, float volume) {
+        MediaPlayer mediaPlayer = MediaPlayer.create(context, musicId);
 
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(volume, volume);
+
+        return mediaPlayer;
+    }
+
+    public static void SetStartMusic(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
     }
 
-    public static void SetPauseBackgroundMusic() {
+    public static void SetPauseMusic(MediaPlayer mediaPlayer) {
         mediaPlayer.pause();
     }
 
-    public static void SetResumeBackgroundMusic() {
-        mediaPlayer.start();
-    }
-
-    public static void SetMute() {
-        mediaPlayer.setVolume(0,0);
-    }
-
-    public static void SetMaxVolume() {
-        mediaPlayer.setVolume(100,100);
+    public static void SetVolume(MediaPlayer mediaPlayer, float leftVolume, float rightVolume) {
+        mediaPlayer.setVolume(leftVolume, rightVolume);
     }
 }
