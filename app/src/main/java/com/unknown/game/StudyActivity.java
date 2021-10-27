@@ -103,6 +103,7 @@ public class StudyActivity extends AppCompatActivity {
         tvCalculation.setText(freakingMath.getN1() + freakingMath.getSign() + freakingMath.getN2());
 
         CountDown();
+        timer.start();
     }
 
     private void CountDown() {
@@ -122,7 +123,7 @@ public class StudyActivity extends AppCompatActivity {
                 SetBackgroundMusics.SetPauseMusic(mediaPlayer);
                 setEndGameLayout();
             }
-        }.start();
+        };
     }
 
     private void setEndGameLayout() {
