@@ -116,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnPlayOnClick(View view) {
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        finish();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        startActivity(intent);
 
     }
 
