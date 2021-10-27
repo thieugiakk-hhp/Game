@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:background="@drawable/backgroundtest"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GAME OVER!"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"/>
+
+            <TextView
+                android:textColor="@android:color/white"
+                android:id="@+id/txtCurrentScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2006"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"/>
+            <TextView
+                android:textColor="@android:color/white"
+                android:id="@+id/txtHighScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="High Score: 2007"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"/>
+            <TextView
+                android:padding="5.00dp"
+                android:background="@drawable/sea"
+                android:textStyle="bold"
+                android:textSize="24.00sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:id="@+id/btnPlayAgain"
+                android:layout_width="150.00dp"
+                android:layout_height="50.00dp"
+                android:text="TRY AGAIN"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>
