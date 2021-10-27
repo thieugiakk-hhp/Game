@@ -71,11 +71,6 @@ public class StudyActivity extends AppCompatActivity {
 
         music = true;
         btnSetVolume = findViewById(R.id.btnSetVolume);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         score = 0;
 
@@ -90,23 +85,19 @@ public class StudyActivity extends AppCompatActivity {
         mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(StudyActivity.this, R.raw.sound_tiktok, 100);
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setContentView(R.layout.activity_study);
-        onStart();
-    }
-
     private void initFreakingMath() {
         FreakingMath freakingMath = FreakingMath.randomFreakingMath();
         result = freakingMath.isResult();
         tvCalculation.setText(freakingMath.getN1() + freakingMath.getSign() + freakingMath.getN2());
 
         CountDown();
-        timer.start();
     }
 
     private void CountDown() {
+        if (timer != null) {
+            timer.cancel();
+        }
+
         timer = new CountDownTimer(7000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -124,37 +115,8 @@ public class StudyActivity extends AppCompatActivity {
                 setEndGameLayout();
             }
         };
-    }
 
-    private void setEndGameLayout() {
-        LayoutInflater inflater = StudyActivity.this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.mini_game_result_dialog, null);
-        setContentView(view);
-
-        TextView tvYourScore = findViewById(R.id.tvYourScore);
-        TextView tvHighScore = findViewById(R.id.tvHighScore);
-
-        tvYourScore.setText(String.valueOf(score));
-        tvHighScore.setText(String.valueOf(sharedPreferences.getInt("highScore", score)));
-
-        Button btnTryAgain = findViewById(R.id.btnTryAgain);
-        btnTryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedPreferences.edit().putInt("yourScore", sharedPreferences.getInt("yourScore", 0) + score);
-                sharedPreferences.edit().apply();
-                onRestart();
-            }
-        });
-
-        Button btnContinue = findViewById(R.id.btnContinue);
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("petIndex", sharedPreferences.getInt("yourScore", score)));
-                finish();
-            }
-        });
+        timer.start();
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -166,7 +128,6 @@ public class StudyActivity extends AppCompatActivity {
             boolean b = Boolean.parseBoolean(tag);
 
             if (result == b) {
-                Log.e("res", String.valueOf(result));
                 score += 10;
                 tvScore.setText(String.valueOf(score));
                 initFreakingMath();
@@ -175,9 +136,8 @@ public class StudyActivity extends AppCompatActivity {
                     sharedPreferences.edit().putInt("highScore", score);
                 }
                 sharedPreferences.edit().putInt("yourScore", score);
-                //playLayout.setVisibility(View.INVISIBLE);
+                playLayout.setVisibility(View.INVISIBLE);
                 setEndGameLayout();
-                Log.e("res", String.valueOf(result));
             }
             sharedPreferences.edit().apply();
         }
@@ -210,6 +170,34 @@ public class StudyActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void setEndGameLayout() {
+        TextView tvYourScore = findViewById(R.id.tvYourScore);
+        TextView tvHighScore = findViewById(R.id.tvHighScore);
+
+        tvYourScore.setText(String.valueOf(score));
+        tvHighScore.setText(String.valueOf(sharedPreferences.getInt("highScore", score)));
+
+        /*Button btnTryAgain = findViewById(R.id.btnTryAgain);
+        btnTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPreferences.edit().putInt("yourScore", sharedPreferences.getInt("yourScore", 0) + score);
+                sharedPreferences.edit().apply();
+                score = 0;
+
+            }
+        });*/
+
+        Button btnContinue = findViewById(R.id.btnContinue);
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("petIndex", sharedPreferences.getInt("yourScore", score)));
+                finish();
+            }
+        });
+    }
 
     @Override
     protected void onPause() {

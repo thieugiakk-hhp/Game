@@ -14,6 +14,7 @@ public class SharePreferenceUtils {
         preferences = context.getSharedPreferences(Const.COIN, Context.MODE_PRIVATE);
         editor = preferences.edit();
     }
+
     public static int getIntData(Context context, String key) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int r = preferences.getInt(key, 0);
