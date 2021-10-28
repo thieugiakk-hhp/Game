@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_study_activity"
+    android:orientation="horizontal"
+    android:layout_gravity="center_horizontal"
     tools:context=".StudyActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -25,11 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvNotiStt;
 
-    private CountDownTimer timer;
+    private CountDownTimer timerNoti;
+
+    private CountDownTimer timerDecrease;
 
     private MediaPlayer mediaPlayer;
     
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +42,17 @@ public class MainActivity extends AppCompatActivity {
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
         sharedPreferences = getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         GetPetData();
+        SetIndexDecrease();
 
         tvNotiStt = (TextView) findViewById(R.id.tvNotiStt);
         music = true;
 
         mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
         mediaPlayer.start();
+
+        tvNotiStt.setText(String.valueOf(getParent()));
     }
 
     @Override
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 
-    @Override
+    /*@Override
     protected void onStart() {
         super.onStart();
         int intExp = getIntent().getIntExtra("petIndex", 0);
@@ -80,15 +87,15 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putInt(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 100) - healthIndex);
 
         sharedPreferences.edit().apply();
-    }
+    }*/
 
     public void btnIn4OnClick(View view) {
         Intent intent = new Intent(MainActivity.this, PetIn4Activity.class);
         intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
-        intent.putExtra(PET_LEVEL, sharedPreferences.getFloat(PET_LEVEL, 5f));
-        intent.putExtra(PET_MONEY, sharedPreferences.getInt(PET_MONEY, 24));
-        intent.putExtra(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 75));
-        intent.putExtra(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 75));
+        intent.putExtra(PET_LEVEL, sharedPreferences.getFloat(PET_LEVEL, 1f));
+        intent.putExtra(PET_MONEY, sharedPreferences.getInt(PET_MONEY, 0));
+        intent.putExtra(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 0));
+        intent.putExtra(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 0));
         startActivity(intent);
     }
 
@@ -124,14 +131,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnEatingOnClick(View view) {
-        if (sharedPreferences.getInt(PET_MONEY, 0) >= 1000) {
+        if (sharedPreferences.getInt(PET_MONEY, 0) >= 500) {
             if (sharedPreferences.getInt(PET_HUNGRY, 0) < 70) {
                 if (sharedPreferences.getInt(PET_HUNGRY, 100) + 50 > 100) {
                     SetTimeTextViewNoti("Tiền: -1000, " + "Độ no của " + sharedPreferences.getString(PET_NAME, "") + " đã đầy");
-                    sharedPreferences.edit().putInt(PET_HUNGRY,  100);
+                    editor.putInt(PET_HUNGRY,  100);
                 } else {
                     SetTimeTextViewNoti("Tiền: -1000, Độ no + 50");
-                    sharedPreferences.edit().putInt(PET_HUNGRY,  sharedPreferences.getInt(PET_HUNGRY, 100) + 50);
+                    editor.putInt(PET_HUNGRY,  sharedPreferences.getInt(PET_HUNGRY, 100) + 50);
                 }
             } else {
                 SetTimeTextViewNoti(sharedPreferences.getString(PET_NAME, "") + " đã no bụng");
@@ -144,12 +151,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnHealingOnClick(View view) {
+        if (sharedPreferences.getInt(PET_MONEY, 0) >= 1000) {
+            if (sharedPreferences.getInt(PET_HEALTH, 0) < 70) {
+                if (sharedPreferences.getInt(PET_HUNGRY, 100) + 50 > 100) {
+                    SetTimeTextViewNoti("Tiền: -1000, " + "Độ no của " + sharedPreferences.getString(PET_NAME, "") + " đã đầy");
+                    editor.putInt(PET_HEALTH,  100);
+                } else {
+                    SetTimeTextViewNoti("Tiền: -1000, Độ no + 50");
+                    editor.putInt(PET_HEALTH,  sharedPreferences.getInt(PET_HEALTH, 100) + 50);
+                }
+            } else {
+                SetTimeTextViewNoti(sharedPreferences.getString(PET_NAME, "") + " đã no bụng");
+            }
+        } else {
+            SetTimeTextViewNoti("Bạn không đủ tiền để mua thức ăn");
+        }
 
+        sharedPreferences.edit().apply();
     }
 
     private void GetPetData() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
         if (sharedPreferences.getString(PET_NAME, "") == "") {
             editor.putString(PET_NAME, getIntent().getStringExtra(PET_NAME));
         }
@@ -170,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetTimeTextViewNoti(String str) {
-        timer = new CountDownTimer(10000,1000) {
+        timerNoti = new CountDownTimer(10000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long s = millisUntilFinished / 1000;
@@ -180,9 +201,41 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                timer.cancel();
+                timerNoti.cancel();
                 tvNotiStt.setVisibility(View.INVISIBLE);
             }
         }.start();
+    }
+
+    private void SetIndexDecrease() {
+        timerDecrease = new CountDownTimer(60000, 60000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (sharedPreferences.getInt(PET_HUNGRY, -1) <= 0) {
+                    editor.putInt(PET_HUNGRY, 0);
+                } else {
+                    editor.putInt(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 0) - 1);
+                }
+
+                if (sharedPreferences.getInt(PET_HEALTH, -1) <= 0) {
+                    editor.putInt(PET_HEALTH, 0);
+                } else {
+                    editor.putInt(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 0) - 1);
+                }
+
+                editor.apply();
+            }
+
+            @Override
+            public void onFinish() {
+                timerDecrease.start();
+                Log.e("index", String.valueOf(sharedPreferences.getInt(PET_HUNGRY, 100)));
+                Log.e("index1", String.valueOf(sharedPreferences.getInt(PET_HEALTH, 100)));
+            }
+        }.start();
+    }
+
+    private void SetPetIndexChange() {
+
     }
 }

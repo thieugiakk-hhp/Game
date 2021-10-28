@@ -112,7 +112,7 @@ public class StudyActivity extends AppCompatActivity {
             public void onFinish() {
                 timer.cancel();
                 SetBackgroundMusics.SetPauseMusic(mediaPlayer);
-                setEndGameLayout();
+                //setEndGameLayout();
             }
         };
 
@@ -136,8 +136,8 @@ public class StudyActivity extends AppCompatActivity {
                     sharedPreferences.edit().putInt("highScore", score);
                 }
                 sharedPreferences.edit().putInt("yourScore", score);
-                playLayout.setVisibility(View.INVISIBLE);
-                setEndGameLayout();
+                /*playLayout.setVisibility(View.INVISIBLE);
+                setEndGameLayout();*/
             }
             sharedPreferences.edit().apply();
         }
@@ -171,14 +171,14 @@ public class StudyActivity extends AppCompatActivity {
         }
     };
 
-    private void setEndGameLayout() {
+    /*private void setEndGameLayout() {
         TextView tvYourScore = findViewById(R.id.tvYourScore);
         TextView tvHighScore = findViewById(R.id.tvHighScore);
 
         tvYourScore.setText(String.valueOf(score));
         tvHighScore.setText(String.valueOf(sharedPreferences.getInt("highScore", score)));
 
-        /*Button btnTryAgain = findViewById(R.id.btnTryAgain);
+        Button btnTryAgain = findViewById(R.id.btnTryAgain);
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,17 +187,17 @@ public class StudyActivity extends AppCompatActivity {
                 score = 0;
 
             }
-        });*/
+        });
 
         Button btnContinue = findViewById(R.id.btnContinue);
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("petIndex", sharedPreferences.getInt("yourScore", score)));
+                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("exp", sharedPreferences.getInt("yourScore", score)));
                 finish();
             }
         });
-    }
+    }*/
 
     @Override
     protected void onPause() {

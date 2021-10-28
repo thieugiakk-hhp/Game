@@ -3,12 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_main.xml" value="0.9" />
+        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_game.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_pet_in4.xml" value="0.33" />
         <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_pet_in4_listview_pet_in4.xml" value="0.38697916666666665" />
-        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_result_ativity.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_result_ativity.xml" value="0.42291666666666666" />
         <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_start.xml" value="0.5" />
-        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_study.xml" value="0.1" />
+        <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/activity_study.xml" value="0.21354166666666666" />
         <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/end_mini_game_dialog.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/thieu/AndroidStudioProjects/Game/app/src/main/res/layout/mini_game_result_dialog.xml" value="0.38333333333333336" />
       </map>

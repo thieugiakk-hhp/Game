@@ -17,6 +17,16 @@ public class PetIn4Activity extends AppCompatActivity {
     private static final String PET_HUNGRY = "PET_HUNGRY";
     private static final String PET_HEALTH = "PET_HEALTH";
 
+    private SharedPreferences sharedPreferences;
+
+    private TextView tvName;
+    private TextView tvLevel;
+    private TextView tvMoney;
+    private TextView tvHungry;
+    private TextView tvHealth;
+    private SeekBar sbHungry;
+    private SeekBar sbHealth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,40 +34,33 @@ public class PetIn4Activity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
-        SharedPreferences sharedPreferences= this.getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
-        //Intent intent = getIntent();
+        sharedPreferences = getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
 
-        //GetPetData.GetAllIn4(sharedPreferences, intent, PET_NAME, PET_LEVEL, PET_MONEY, PET_HUNGRY, PET_HEALTH);
+        tvName = (TextView) findViewById(R.id.tvPetName);
+        tvLevel = (TextView) findViewById(R.id.tvPetLevel);
+        tvMoney = (TextView) findViewById(R.id.tvPetMoney);
+        tvHungry = (TextView) findViewById(R.id.tvPetHungry);
+        tvHealth = (TextView) findViewById(R.id.tvPetHealth);
+        sbHungry = (SeekBar) findViewById(R.id.sbHungry);
+        sbHealth = (SeekBar) findViewById(R.id.sbHealth);
 
-        TextView tvName = (TextView) findViewById(R.id.tvPetName);
-        TextView tvLevel = (TextView) findViewById(R.id.tvPetLevel);
-        TextView tvMoney = (TextView) findViewById(R.id.tvPetMoney);
-        TextView tvHungry = (TextView) findViewById(R.id.tvPetHungry);
-        TextView tvHealth = (TextView) findViewById(R.id.tvPetHealth);
-        SeekBar sbHungry = (SeekBar) findViewById(R.id.sbHungry);
-        SeekBar sbHealth = (SeekBar) findViewById(R.id.sbHealth);
-
-        /*tvName.setText(sharedPreferences.getString(PET_NAME, ""));
-        tvLevel.setText(String.valueOf(Math.round(sharedPreferences.getFloat(PET_LEVEL, 3f))));
-        tvMoney.setText(String.valueOf(sharedPreferences.getInt(PET_MONEY, 0)));*/
-
-        GetPetIn4(sharedPreferences, tvName, tvLevel, tvMoney);
-        GetPetStatus(sharedPreferences, tvHungry, sbHungry, tvHealth, sbHealth);
+        GetPetIn4();
+        GetPetStatus();
     }
 
-    private void GetPetIn4(SharedPreferences sharedPreferences, TextView tvName, TextView tvLevel, TextView tvMoney) {
+    private void GetPetIn4() {
         tvName.setText(sharedPreferences.getString(PET_NAME, ""));
         tvLevel.setText(String.valueOf(Math.round(sharedPreferences.getFloat(PET_LEVEL, 1f))));
         tvMoney.setText(String.valueOf(sharedPreferences.getInt(PET_MONEY, 0)));
     }
 
-    private void GetPetStatus(SharedPreferences sharedPreferences, TextView tvHungry, SeekBar sbHungry, TextView tvHealth, SeekBar sbHealth) {
+    private void GetPetStatus() {
         tvHungry.setText(String.valueOf(sharedPreferences.getInt(PET_HUNGRY, 50)));
         tvHealth.setText(String.valueOf(sharedPreferences.getInt(PET_HEALTH, 50)));
 
-        sbHungry.setProgress(sharedPreferences.getInt(PET_HUNGRY, 15));
+        sbHungry.setProgress(sharedPreferences.getInt(PET_HUNGRY, 0));
         sbHungry.setEnabled(false);
-        sbHealth.setProgress(sharedPreferences.getInt(PET_HEALTH, 15));
+        sbHealth.setProgress(sharedPreferences.getInt(PET_HEALTH, 0));
         sbHealth.setEnabled(false);
     }
 }
