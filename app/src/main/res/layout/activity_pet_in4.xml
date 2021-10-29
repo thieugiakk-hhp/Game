@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_in4_activity"
     android:orientation="horizontal"
-    android:layout_gravity="center_horizontal"
+    android:layout_gravity="left"
     tools:context=".PetIn4Activity" >
 
 

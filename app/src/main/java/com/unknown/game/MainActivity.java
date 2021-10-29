@@ -136,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnEatingOnClick(View view) {
         clickSound.start();
+
+        timerNotification.onFinish();
+
         if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 500) {
             if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) < 70) {
                 if (sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50 > 100) {
@@ -197,10 +200,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetTimeTextViewNotification(String str) {
+        if (timerNotification != null) {
+            timerNotification.onFinish();
+        }
+
         timerNotification = new CountDownTimer(10000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long s = millisUntilFinished / 1000;
                 tvNotificationStt.setText(str);
                 tvNotificationStt.setVisibility(View.VISIBLE);
             }

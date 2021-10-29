@@ -29,7 +29,8 @@
                     android:text="Score : 300"
                     android:textColor="@android:color/white"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:fontFamily="@font/icielbrandontext_bold"/>
 
             </RelativeLayout>
 
@@ -97,7 +98,6 @@
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/svn_comic_sans_ms"/>
-
 
             </FrameLayout>
 
