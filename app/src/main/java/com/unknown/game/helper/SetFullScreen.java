@@ -1,4 +1,4 @@
-package com.unknown.game;
+package com.unknown.game.helper;
 
 import android.view.View;
 import android.view.Window;

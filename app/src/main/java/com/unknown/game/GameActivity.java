@@ -18,6 +18,8 @@ import androidx.databinding.DataBindingUtil;
 import com.unknown.game.R;
 import com.unknown.game.databinding.ActivityGameBinding;
 import com.unknown.game.helper.Const;
+import com.unknown.game.helper.SetBackgroundMusics;
+import com.unknown.game.helper.SetFullScreen;
 import com.unknown.game.helper.SharePreferenceUtils;
 import com.unknown.game.ResultAtivity;
 import com.unknown.game.model.Rocket;

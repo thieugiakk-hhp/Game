@@ -17,10 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.unknown.game.helper.Const;
+import com.unknown.game.helper.SetBackgroundMusics;
+import com.unknown.game.helper.SetFullScreen;
+import com.unknown.game.helper.SetSoundEffects;
 
 public class StartActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
+
+    private MediaPlayer clickSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,8 @@ public class StartActivity extends AppCompatActivity {
                         editor.putString(Const.PET_NAME, petName);
                         editor.apply();
 
+                        clickSound = SetSoundEffects.SetClickSound(StartActivity.this, R.raw.sound_click, 100);
+                        clickSound.start();
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
                         intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
                         startActivity(intent);
@@ -85,6 +92,8 @@ public class StartActivity extends AppCompatActivity {
             });
         }
         else {
+            clickSound = SetSoundEffects.SetClickSound(StartActivity.this, R.raw.sound_click, 100);
+            clickSound.start();
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
             intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
             startActivity(intent);

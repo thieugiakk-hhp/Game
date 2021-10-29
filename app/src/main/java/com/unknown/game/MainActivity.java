@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.unknown.game.helper.Const;
+import com.unknown.game.helper.SetBackgroundMusics;
+import com.unknown.game.helper.SetFullScreen;
+import com.unknown.game.helper.SetSoundEffects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private CountDownTimer timerDecrease;
 
     private MediaPlayer mediaPlayer;
+
+    private MediaPlayer clickSound;
     
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -46,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
         mediaPlayer.start();
-        
+
+        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
+
         CaiNayDeTest();
         
         SetPetIndexChange();
@@ -72,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnIn4OnClick(View view) {
+        clickSound.start();
         Intent intent = new Intent(MainActivity.this, PetIn4Activity.class);
         intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
         intent.putExtra(Const.PET_LEVEL, sharedPreferences.getFloat(Const.PET_LEVEL, 1f));
@@ -82,11 +90,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnSetVolumeOnClick(View view) {
+        clickSound.start();
         if (music) {
             view.setBackground(getDrawable(R.drawable.ic_mute));
             music = !music;
             Log.e("music", String.valueOf(music));
             SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
+            SetSoundEffects.SetVolume(clickSound, 0, 0);
         }
 
         else if (!music) {
@@ -94,10 +104,12 @@ public class MainActivity extends AppCompatActivity {
             music = !music;
             Log.e("music", String.valueOf(music));
             SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
+            SetSoundEffects.SetVolume(clickSound, 1, 1);
         }
     }
 
     public void btnStudyOnClick(View view) {
+        clickSound.start();
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
             SetTimeTextViewNotification("Đói lắm! Không học đâu!");
         } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 15) {
@@ -110,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnPlayOnClick(View view) {
+        clickSound.start();
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
             SetTimeTextViewNotification("Đói lắm! Đi ăn cơ!");
         } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 20) {
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnEatingOnClick(View view) {
+        clickSound.start();
         if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 500) {
             if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) < 70) {
                 if (sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50 > 100) {
@@ -142,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnHealingOnClick(View view) {
+        clickSound.start();
         if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 1000) {
             if (sharedPreferences.getInt(Const.PET_HEALTH, 0) < 70) {
                 if (sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50 > 100) {

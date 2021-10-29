@@ -1,4 +1,4 @@
-package com.unknown.game;
+package com.unknown.game.helper;
 
 import android.content.Context;
 import android.media.MediaPlayer;

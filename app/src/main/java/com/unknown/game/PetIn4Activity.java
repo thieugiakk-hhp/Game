@@ -10,6 +10,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.unknown.game.helper.Const;
+import com.unknown.game.helper.SetFullScreen;
 
 public class PetIn4Activity extends AppCompatActivity {
 

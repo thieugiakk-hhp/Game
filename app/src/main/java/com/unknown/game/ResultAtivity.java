@@ -3,6 +3,7 @@ package com.unknown.game;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +16,8 @@ import androidx.databinding.DataBindingUtil;
 import com.unknown.game.databinding.ActivityResultAtivityBinding;
 import com.unknown.game.helper.Const;
 import com.unknown.game.GameActivity;
+import com.unknown.game.helper.SetFullScreen;
+import com.unknown.game.helper.SetSoundEffects;
 
 public class ResultAtivity extends AppCompatActivity {
 
@@ -23,6 +26,7 @@ public class ResultAtivity extends AppCompatActivity {
     private SharedPreferences sharedPreferencesStudy;
     private SharedPreferences sharedPreferencesGame;
 
+    private MediaPlayer clickSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +35,10 @@ public class ResultAtivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow());
 
-        /*sharedPreferencesGame = getSharedPreferences(Const.GAME_DATA, Context.MODE_PRIVATE);
-        ResultGameActivity();*/
-
         sharedPreferencesStudy = getSharedPreferences(Const.STUDY_DATA, Context.MODE_PRIVATE);
         sharedPreferencesGame = getSharedPreferences(Const.GAME_DATA, Context.MODE_PRIVATE);
+
+        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
         String strActivity = getIntent().getStringExtra(Const.ACTIVITY);
 
@@ -71,6 +74,7 @@ public class ResultAtivity extends AppCompatActivity {
 
         int highScore = sharedPreferencesStudy.getInt(Const.HIGH_SCORE, 0);
         if (score > highScore) {
+            clickSound.start();
             highScore = score;
             sharedPreferencesStudy.edit().putInt(Const.HIGH_SCORE, score);
             sharedPreferencesStudy.edit().apply();
@@ -79,6 +83,7 @@ public class ResultAtivity extends AppCompatActivity {
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
         binding.btnTryAgain.setOnClickListener(view -> {
+            clickSound.start();
             startActivity(new Intent(ResultAtivity.this, StudyActivity.class));
             finish();
         });
@@ -86,6 +91,7 @@ public class ResultAtivity extends AppCompatActivity {
         int exp = sharedPreferencesStudy.getInt(Const.EXP, score);
         Log.e(Const.EXP, String.valueOf(exp));
         binding.btnContinue.setOnClickListener(view -> {
+            clickSound.start();
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
             sharedPreferencesStudy.edit().putInt(Const.EXP, 0);
             sharedPreferencesStudy.edit().apply();
@@ -111,6 +117,7 @@ public class ResultAtivity extends AppCompatActivity {
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
         binding.btnTryAgain.setOnClickListener(view -> {
+            clickSound.start();
             startActivity(new Intent(ResultAtivity.this, GameActivity.class));
             finish();
         });
@@ -118,6 +125,7 @@ public class ResultAtivity extends AppCompatActivity {
         int coin = sharedPreferencesGame.getInt(Const.COIN, score);
         Log.e(Const.COIN, String.valueOf(coin));
         binding.btnContinue.setOnClickListener(view -> {
+            clickSound.start();
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
             sharedPreferencesGame.edit().putInt(Const.COIN, 0);
             sharedPreferencesGame.edit().apply();

@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.unknown.game.helper.Const;
+import com.unknown.game.helper.SetBackgroundMusics;
+import com.unknown.game.helper.SetFullScreen;
+import com.unknown.game.helper.SetSoundEffects;
 
 public class StudyActivity extends AppCompatActivity {
 
@@ -53,6 +56,8 @@ public class StudyActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
 
+    private MediaPlayer clickSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +90,7 @@ public class StudyActivity extends AppCompatActivity {
         btnSetVolume.setOnClickListener(setVolumeOnClickListener);
 
         mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(StudyActivity.this, R.raw.sound_tiktok, 100);
+        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
     }
 
     private void initFreakingMath() {
@@ -142,6 +148,7 @@ public class StudyActivity extends AppCompatActivity {
     private View.OnClickListener tapToStart = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            clickSound.start();
             tvTap.setVisibility(View.INVISIBLE);
             playLayout = findViewById(R.id.playLayout);
             playLayout.setVisibility(View.VISIBLE);
@@ -153,16 +160,19 @@ public class StudyActivity extends AppCompatActivity {
     private View.OnClickListener setVolumeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            clickSound.start();
             if (music) {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_mute));
                 music = !music;
                 Log.e("music", String.valueOf(music));
                 SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
+                SetSoundEffects.SetVolume(clickSound, 0, 0);
             } else {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_volume));
                 music = !music;
                 Log.e("music", String.valueOf(music));
                 SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
+                SetSoundEffects.SetVolume(clickSound, 0, 0);
             }
         }
     };
