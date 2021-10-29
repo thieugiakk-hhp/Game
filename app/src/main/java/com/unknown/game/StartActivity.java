@@ -16,10 +16,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class StartActivity extends AppCompatActivity {
+import com.unknown.game.helper.Const;
 
-    private static final String PET_INFORMATION = "PET_INFORMATION";
-    private static final String PET_NAME = "PET_NAME";
+public class StartActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
 
@@ -44,6 +43,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        SetFullScreen.hideSystemUI(getWindow());
     }
 
     @Override
@@ -54,9 +54,9 @@ public class StartActivity extends AppCompatActivity {
 
     public void btnPlayGameOnClick(View view) {
         view.setVisibility(View.INVISIBLE);
-        SharedPreferences sharedPreferences= getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences= getSharedPreferences(Const.PET_INFORMATION, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getString(PET_NAME, "") == "") {
+        if (sharedPreferences.getString(Const.PET_NAME, "") == "") {
             EditText edtName = (EditText) findViewById(R.id.edtName);
             edtName.setVisibility(View.VISIBLE);
             Button btnOK = (Button) findViewById(R.id.btnOK);
@@ -72,11 +72,11 @@ public class StartActivity extends AppCompatActivity {
                     else {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         String petName = edtName.getText().toString().trim();
-                        editor.putString(PET_NAME, petName);
+                        editor.putString(Const.PET_NAME, petName);
                         editor.apply();
 
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                        intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
+                        intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
                         startActivity(intent);
                         SetBackgroundMusics.SetPauseMusic(mediaPlayer);
                         finish();
@@ -86,7 +86,7 @@ public class StartActivity extends AppCompatActivity {
         }
         else {
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
-            intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
+            intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
             startActivity(intent);
             SetBackgroundMusics.SetPauseMusic(mediaPlayer);
             finish();

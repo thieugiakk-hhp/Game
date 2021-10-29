@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.unknown.game.helper.Const;
+
 public class StudyActivity extends AppCompatActivity {
 
     private Context context = this;
@@ -112,7 +114,7 @@ public class StudyActivity extends AppCompatActivity {
             public void onFinish() {
                 timer.cancel();
                 SetBackgroundMusics.SetPauseMusic(mediaPlayer);
-                //setEndGameLayout();
+                SetEndGame();
             }
         };
 
@@ -132,14 +134,8 @@ public class StudyActivity extends AppCompatActivity {
                 tvScore.setText(String.valueOf(score));
                 initFreakingMath();
             } else {
-                if (score > sharedPreferences.getInt("highScore", 0)) {
-                    sharedPreferences.edit().putInt("highScore", score);
-                }
-                sharedPreferences.edit().putInt("yourScore", score);
-                /*playLayout.setVisibility(View.INVISIBLE);
-                setEndGameLayout();*/
+                SetEndGame();
             }
-            sharedPreferences.edit().apply();
         }
     };
 
@@ -171,33 +167,13 @@ public class StudyActivity extends AppCompatActivity {
         }
     };
 
-    /*private void setEndGameLayout() {
-        TextView tvYourScore = findViewById(R.id.tvYourScore);
-        TextView tvHighScore = findViewById(R.id.tvHighScore);
-
-        tvYourScore.setText(String.valueOf(score));
-        tvHighScore.setText(String.valueOf(sharedPreferences.getInt("highScore", score)));
-
-        Button btnTryAgain = findViewById(R.id.btnTryAgain);
-        btnTryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedPreferences.edit().putInt("yourScore", sharedPreferences.getInt("yourScore", 0) + score);
-                sharedPreferences.edit().apply();
-                score = 0;
-
-            }
-        });
-
-        Button btnContinue = findViewById(R.id.btnContinue);
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(StudyActivity.this, MainActivity.class).putExtra("exp", sharedPreferences.getInt("yourScore", score)));
-                finish();
-            }
-        });
-    }*/
+    private void SetEndGame() {
+        Intent intent = new Intent(this, ResultAtivity.class);
+        intent.putExtra(Const.SCORE, score);
+        intent.putExtra(Const.ACTIVITY, "studyActivity");
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onPause() {
@@ -209,6 +185,7 @@ public class StudyActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        SetFullScreen.hideSystemUI(getWindow());
     }
 
     @Override

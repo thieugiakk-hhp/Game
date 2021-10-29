@@ -12,20 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.unknown.game.helper.Const;
 
-    private static final String PET_INFORMATION = "PET_INFORMATION";
-    private static final String PET_NAME = "PET_NAME";
-    private static final String PET_LEVEL = "PET_LEVEL";
-    private static final String PET_MONEY = "PET_MONEY";
-    private static final String PET_HUNGRY = "PET_HUNGRY";
-    private static final String PET_HEALTH = "PET_HEALTH";
+public class MainActivity extends AppCompatActivity {
 
     private boolean music;
 
-    private TextView tvNotiStt;
+    private TextView tvNotificationStt;
 
-    private CountDownTimer timerNoti;
+    private CountDownTimer timerNotification;
 
     private CountDownTimer timerDecrease;
 
@@ -41,18 +36,20 @@ public class MainActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
-        sharedPreferences = getSharedPreferences(PET_INFORMATION, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(Const.PET_INFORMATION, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         GetPetData();
         SetIndexDecrease();
 
-        tvNotiStt = (TextView) findViewById(R.id.tvNotiStt);
+        tvNotificationStt = findViewById(R.id.tvNotificationStt);
         music = true;
 
         mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
         mediaPlayer.start();
-
-        tvNotiStt.setText(String.valueOf(getParent()));
+        
+        CaiNayDeTest();
+        
+        SetPetIndexChange();
     }
 
     @Override
@@ -65,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        SetFullScreen.hideSystemUI(getWindow());
     }
 
     @Override
@@ -73,29 +71,13 @@ public class MainActivity extends AppCompatActivity {
         SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        int intExp = getIntent().getIntExtra("petIndex", 0);
-        float exp = (float) intExp / 250;
-        int hungryIndex = (int) (getIntent().getIntExtra("petIndex", 0) / 5);
-        int healthIndex = (int) (getIntent().getIntExtra("petIndex", 0) / 5);
-
-        float currentLevel = sharedPreferences.getFloat(PET_LEVEL, 1f) + exp;
-        sharedPreferences.edit().putFloat(PET_LEVEL, currentLevel);
-        sharedPreferences.edit().putInt(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 100) - hungryIndex);
-        sharedPreferences.edit().putInt(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 100) - healthIndex);
-
-        sharedPreferences.edit().apply();
-    }*/
-
     public void btnIn4OnClick(View view) {
         Intent intent = new Intent(MainActivity.this, PetIn4Activity.class);
-        intent.putExtra(PET_NAME, sharedPreferences.getString(PET_NAME, ""));
-        intent.putExtra(PET_LEVEL, sharedPreferences.getFloat(PET_LEVEL, 1f));
-        intent.putExtra(PET_MONEY, sharedPreferences.getInt(PET_MONEY, 0));
-        intent.putExtra(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 0));
-        intent.putExtra(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 0));
+        intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
+        intent.putExtra(Const.PET_LEVEL, sharedPreferences.getFloat(Const.PET_LEVEL, 1f));
+        intent.putExtra(Const.PET_MONEY, sharedPreferences.getInt(Const.PET_MONEY, 0));
+        intent.putExtra(Const.PET_HUNGRY, sharedPreferences.getInt(Const.PET_HUNGRY, 0));
+        intent.putExtra(Const.PET_HEALTH, sharedPreferences.getInt(Const.PET_HEALTH, 0));
         startActivity(intent);
     }
 
@@ -116,93 +98,102 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnStudyOnClick(View view) {
-        Intent intent = new Intent(MainActivity.this, StudyActivity.class);
-        finish();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
-        startActivity(intent);
+        if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
+            SetTimeTextViewNotification("Đói lắm! Không học đâu!");
+        } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 15) {
+            SetTimeTextViewNotification("Mệt lắm! Không học đâu!");
+        } else {
+            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            startActivity(new Intent(MainActivity.this, StudyActivity.class));
+            finish();
+        }
     }
 
     public void btnPlayOnClick(View view) {
-        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        finish();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
-        startActivity(intent);
-
+        if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
+            SetTimeTextViewNotification("Đói lắm! Đi ăn cơ!");
+        } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 20) {
+            SetTimeTextViewNotification("Mệt lắm! Không đi chơi đâu!");
+        } else {
+            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            startActivity(new Intent(MainActivity.this, GameActivity.class));
+            finish();
+        }
     }
 
     public void btnEatingOnClick(View view) {
-        if (sharedPreferences.getInt(PET_MONEY, 0) >= 500) {
-            if (sharedPreferences.getInt(PET_HUNGRY, 0) < 70) {
-                if (sharedPreferences.getInt(PET_HUNGRY, 100) + 50 > 100) {
-                    SetTimeTextViewNoti("Tiền: -1000, " + "Độ no của " + sharedPreferences.getString(PET_NAME, "") + " đã đầy");
-                    editor.putInt(PET_HUNGRY,  100);
+        if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 500) {
+            if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) < 70) {
+                if (sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50 > 100) {
+                    SetTimeTextViewNotification("Tiền: -500, " + "Độ no của " + sharedPreferences.getString(Const.PET_NAME, "") + " đã đầy");
+                    editor.putInt(Const.PET_HUNGRY,  100);
                 } else {
-                    SetTimeTextViewNoti("Tiền: -1000, Độ no + 50");
-                    editor.putInt(PET_HUNGRY,  sharedPreferences.getInt(PET_HUNGRY, 100) + 50);
+                    SetTimeTextViewNotification("Tiền: -500, Độ no + 50");
+                    editor.putInt(Const.PET_HUNGRY,  sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50);
                 }
             } else {
-                SetTimeTextViewNoti(sharedPreferences.getString(PET_NAME, "") + " đã no bụng");
+                SetTimeTextViewNotification(sharedPreferences.getString(Const.PET_NAME, "") + " đã no bụng");
             }
         } else {
-            SetTimeTextViewNoti("Bạn không đủ tiền để mua thức ăn");
+            SetTimeTextViewNotification("Bạn không đủ tiền để mua thức ăn");
         }
 
         sharedPreferences.edit().apply();
     }
 
     public void btnHealingOnClick(View view) {
-        if (sharedPreferences.getInt(PET_MONEY, 0) >= 1000) {
-            if (sharedPreferences.getInt(PET_HEALTH, 0) < 70) {
-                if (sharedPreferences.getInt(PET_HUNGRY, 100) + 50 > 100) {
-                    SetTimeTextViewNoti("Tiền: -1000, " + "Độ no của " + sharedPreferences.getString(PET_NAME, "") + " đã đầy");
-                    editor.putInt(PET_HEALTH,  100);
+        if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 1000) {
+            if (sharedPreferences.getInt(Const.PET_HEALTH, 0) < 70) {
+                if (sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50 > 100) {
+                    SetTimeTextViewNotification("Tiền: -1000, " + "Sức khỏe của " + sharedPreferences.getString(Const.PET_NAME, "") + " đã hồi phục");
+                    editor.putInt(Const.PET_HEALTH,  100);
                 } else {
-                    SetTimeTextViewNoti("Tiền: -1000, Độ no + 50");
-                    editor.putInt(PET_HEALTH,  sharedPreferences.getInt(PET_HEALTH, 100) + 50);
+                    SetTimeTextViewNotification("Tiền: -1000, Độ no + 50");
+                    editor.putInt(Const.PET_HEALTH,  sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50);
                 }
             } else {
-                SetTimeTextViewNoti(sharedPreferences.getString(PET_NAME, "") + " đã no bụng");
+                SetTimeTextViewNotification(sharedPreferences.getString(Const.PET_NAME, "") + " đang rất khỏe!");
             }
         } else {
-            SetTimeTextViewNoti("Bạn không đủ tiền để mua thức ăn");
+            SetTimeTextViewNotification("Bạn không đủ tiền để mua thuốc");
         }
 
         sharedPreferences.edit().apply();
     }
 
     private void GetPetData() {
-        if (sharedPreferences.getString(PET_NAME, "") == "") {
-            editor.putString(PET_NAME, getIntent().getStringExtra(PET_NAME));
+        if (sharedPreferences.getString(Const.PET_NAME, "") == "") {
+            editor.putString(Const.PET_NAME, getIntent().getStringExtra(Const.PET_NAME));
         }
-        if (sharedPreferences.getFloat(PET_LEVEL, -1) == -1) {
-            editor.putFloat(PET_LEVEL, 1f);
+        if (sharedPreferences.getFloat(Const.PET_LEVEL, -1) == -1) {
+            editor.putFloat(Const.PET_LEVEL, 1f);
         }
-        if (sharedPreferences.getInt(PET_MONEY, -1) == -1) {
-            editor.putInt(PET_MONEY, 0);
+        if (sharedPreferences.getInt(Const.PET_MONEY, -1) == -1) {
+            editor.putInt(Const.PET_MONEY, 0);
         }
-        if (sharedPreferences.getInt(PET_HUNGRY, -1) == -1) {
-            editor.putInt(PET_HUNGRY, 75);
+        if (sharedPreferences.getInt(Const.PET_HUNGRY, -1) == -1) {
+            editor.putInt(Const.PET_HUNGRY, 75);
         }
-        if (sharedPreferences.getInt(PET_HEALTH, -1) == -1) {
-            editor.putInt(PET_HEALTH, 75);
+        if (sharedPreferences.getInt(Const.PET_HEALTH, -1) == -1) {
+            editor.putInt(Const.PET_HEALTH, 75);
         }
 
         editor.apply();
     }
 
-    private void SetTimeTextViewNoti(String str) {
-        timerNoti = new CountDownTimer(10000,1000) {
+    private void SetTimeTextViewNotification(String str) {
+        timerNotification = new CountDownTimer(10000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long s = millisUntilFinished / 1000;
-                tvNotiStt.setText(str);
-                tvNotiStt.setVisibility(View.VISIBLE);
+                tvNotificationStt.setText(str);
+                tvNotificationStt.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onFinish() {
-                timerNoti.cancel();
-                tvNotiStt.setVisibility(View.INVISIBLE);
+                timerNotification.cancel();
+                tvNotificationStt.setVisibility(View.INVISIBLE);
             }
         }.start();
     }
@@ -211,16 +202,16 @@ public class MainActivity extends AppCompatActivity {
         timerDecrease = new CountDownTimer(60000, 60000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if (sharedPreferences.getInt(PET_HUNGRY, -1) <= 0) {
-                    editor.putInt(PET_HUNGRY, 0);
+                if (sharedPreferences.getInt(Const.PET_HUNGRY, -1) <= 0) {
+                    editor.putInt(Const.PET_HUNGRY, 0);
                 } else {
-                    editor.putInt(PET_HUNGRY, sharedPreferences.getInt(PET_HUNGRY, 0) - 1);
+                    editor.putInt(Const.PET_HUNGRY, sharedPreferences.getInt(Const.PET_HUNGRY, 0) - 1);
                 }
 
-                if (sharedPreferences.getInt(PET_HEALTH, -1) <= 0) {
-                    editor.putInt(PET_HEALTH, 0);
+                if (sharedPreferences.getInt(Const.PET_HEALTH, -1) <= 0) {
+                    editor.putInt(Const.PET_HEALTH, 0);
                 } else {
-                    editor.putInt(PET_HEALTH, sharedPreferences.getInt(PET_HEALTH, 0) - 1);
+                    editor.putInt(Const.PET_HEALTH, sharedPreferences.getInt(Const.PET_HEALTH, 0) - 1);
                 }
 
                 editor.apply();
@@ -229,13 +220,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 timerDecrease.start();
-                Log.e("index", String.valueOf(sharedPreferences.getInt(PET_HUNGRY, 100)));
-                Log.e("index1", String.valueOf(sharedPreferences.getInt(PET_HEALTH, 100)));
+                Log.e("index", String.valueOf(sharedPreferences.getInt(Const.PET_HUNGRY, 100)));
+                Log.e("index1", String.valueOf(sharedPreferences.getInt(Const.PET_HEALTH, 100)));
             }
         }.start();
     }
 
     private void SetPetIndexChange() {
+        int intExp = getIntent().getIntExtra(Const.EXP, 0);
+        float exp = (float) intExp / 250;
 
+        int coin = getIntent().getIntExtra(Const.COIN, 0);
+
+        int hungryIndex = (getIntent().getIntExtra(Const.EXP, 0) / 10) + (getIntent().getIntExtra(Const.COIN, 0) / 5);
+        int healthIndex = (getIntent().getIntExtra(Const.EXP, 0) / 10) + (getIntent().getIntExtra(Const.COIN, 0) / 10);
+
+        float currentLevel = sharedPreferences.getFloat(Const.PET_LEVEL, 1f) + exp;
+        
+        int currentMoney = sharedPreferences.getInt(Const.PET_MONEY, 0) + coin;
+        
+        int currentHungry = sharedPreferences.getInt(Const.PET_HUNGRY, 0) - hungryIndex;
+        int currentHealth = sharedPreferences.getInt(Const.PET_HEALTH, 0) - healthIndex;
+        currentHungry = currentHungry <= 0 ? 0 : currentHungry;
+        currentHealth = currentHealth <= 0 ? 0 : currentHealth;
+        
+        editor.putFloat(Const.PET_LEVEL, currentLevel);
+        editor.putInt(Const.PET_MONEY, currentMoney);
+        editor.putInt(Const.PET_HUNGRY, currentHungry);
+        editor.putInt(Const.PET_HEALTH, currentHealth);
+
+        editor.apply();
+    }
+    
+    private void CaiNayDeTest() {
+        editor.putFloat(Const.PET_LEVEL, 1.75f);
+        editor.putInt(Const.PET_MONEY, 100000);
+        editor.putInt(Const.PET_HUNGRY, 100);
+        editor.putInt(Const.PET_HEALTH, 100);
+        
+        editor.apply();
     }
 }

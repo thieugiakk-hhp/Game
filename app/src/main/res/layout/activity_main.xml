@@ -64,11 +64,12 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvNotiStt"
+        android:id="@+id/tvNotificationStt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="90dp"
         android:fontFamily="@font/icieleffra_regular"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

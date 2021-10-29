@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,11 +59,18 @@ public class GameActivity extends AppCompatActivity {
 
     private int score;
 
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_game);
+
+        SetFullScreen.hideSystemUI(getWindow());
+
+        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.game_music, 100);
+        mediaPlayer.start();
+
         defaultPosition();
         //Get Screen size
         binding.no1.setVisibility(View.INVISIBLE);
@@ -81,6 +89,25 @@ public class GameActivity extends AppCompatActivity {
         screenWidth = size.x;
 
         binding.txtScore.setText("Score: "+ 0);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SetFullScreen.hideSystemUI(getWindow());
+        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
     }
 
     public void launchNewActivity(Context context, String packageName){
@@ -189,8 +216,9 @@ public class GameActivity extends AppCompatActivity {
             no2X = -20;
             timer.cancel();
             timer = null;
-            Intent intent = new Intent(this, ResultAtivity.class);
+            Intent intent = new Intent(GameActivity.this, ResultAtivity.class);
             intent.putExtra(Const.SCORE, score);
+            intent.putExtra(Const.ACTIVITY, "gameActivity");
             startActivity(intent);
             finish();
         }
