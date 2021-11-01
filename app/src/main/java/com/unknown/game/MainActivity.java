@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
-        CaiNayDeTest();
+        //CaiNayDeTest();
         
         SetPetIndexChange();
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putFloat(Const.PET_LEVEL, 1f);
         }
         if (sharedPreferences.getInt(Const.PET_MONEY, -1) == -1) {
-            editor.putInt(Const.PET_MONEY, 0);
+            editor.putInt(Const.PET_MONEY, 10000);
         }
         if (sharedPreferences.getInt(Const.PET_HUNGRY, -1) == -1) {
             editor.putInt(Const.PET_HUNGRY, 75);

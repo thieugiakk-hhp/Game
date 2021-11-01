@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -55,6 +56,8 @@ public class StartActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+
+        Log.e("onDestroy", "Đã finish");
     }
 
     public void btnPlayGameOnClick(View view) {
@@ -86,6 +89,7 @@ public class StartActivity extends AppCompatActivity {
                         intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
                         startActivity(intent);
                         SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+                        view.setVisibility(View.VISIBLE);
                         finish();
                     }
                 }
@@ -98,6 +102,7 @@ public class StartActivity extends AppCompatActivity {
             intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
             startActivity(intent);
             SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            view.setVisibility(View.VISIBLE);
             finish();
         }
     }

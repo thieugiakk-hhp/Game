@@ -99,10 +99,10 @@ public class ResultAtivity extends AppCompatActivity {
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
 
-            finish();
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
             studyEditor.putInt(Const.EXP, 0);
             studyEditor.apply();
+            finish();
         });
     }
 
@@ -135,10 +135,16 @@ public class ResultAtivity extends AppCompatActivity {
         Log.e(Const.COIN, String.valueOf(coin));
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
-            finish();
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
             gameEditor.putInt(Const.COIN, 0);
             gameEditor.apply();
+            finish();
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("onDestroy", "Đã finish");
     }
 }
