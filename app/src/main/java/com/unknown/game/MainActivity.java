@@ -160,9 +160,11 @@ public class MainActivity extends AppCompatActivity {
                 if (sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50 > 100) {
                     SetTimeTextViewNotification("Tiền: -500, " + "Độ no của " + sharedPreferences.getString(Const.PET_NAME, "") + " đã đầy");
                     editor.putInt(Const.PET_HUNGRY,  100);
+                    editor.putInt(Const.PET_MONEY, sharedPreferences.getInt(Const.PET_MONEY, 100) - 500);
                 } else {
                     SetTimeTextViewNotification("Tiền: -500, Độ no + 50");
                     editor.putInt(Const.PET_HUNGRY,  sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50);
+                    editor.putInt(Const.PET_MONEY, sharedPreferences.getInt(Const.PET_MONEY, 100) - 500);
                 }
             } else {
                 SetTimeTextViewNotification(sharedPreferences.getString(Const.PET_NAME, "") + " đã no bụng");
@@ -171,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             SetTimeTextViewNotification("Bạn không đủ tiền để mua thức ăn");
         }
 
-        sharedPreferences.edit().apply();
+        editor.apply();
     }
 
     public void btnHealingOnClick(View view) {
@@ -182,9 +184,11 @@ public class MainActivity extends AppCompatActivity {
                 if (sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50 > 100) {
                     SetTimeTextViewNotification("Tiền: -1000, " + "Sức khỏe của " + sharedPreferences.getString(Const.PET_NAME, "") + " đã hồi phục");
                     editor.putInt(Const.PET_HEALTH,  100);
+                    editor.putInt(Const.PET_MONEY, sharedPreferences.getInt(Const.PET_MONEY, 100) - 1000);
                 } else {
                     SetTimeTextViewNotification("Tiền: -1000, Độ no + 50");
                     editor.putInt(Const.PET_HEALTH,  sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50);
+                    editor.putInt(Const.PET_MONEY, sharedPreferences.getInt(Const.PET_MONEY, 100) - 1000);
                 }
             } else {
                 SetTimeTextViewNotification(sharedPreferences.getString(Const.PET_NAME, "") + " đang rất khỏe!");
@@ -193,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             SetTimeTextViewNotification("Bạn không đủ tiền để mua thuốc");
         }
 
-        sharedPreferences.edit().apply();
+        editor.apply();
     }
 
     private void GetPetData() {

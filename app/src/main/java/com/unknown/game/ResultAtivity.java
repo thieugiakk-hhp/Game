@@ -26,6 +26,9 @@ public class ResultAtivity extends AppCompatActivity {
     private SharedPreferences sharedPreferencesStudy;
     private SharedPreferences sharedPreferencesGame;
 
+    private SharedPreferences.Editor studyEditor;
+    private SharedPreferences.Editor gameEditor;
+
     private MediaPlayer clickSound;
 
     @Override
@@ -37,6 +40,9 @@ public class ResultAtivity extends AppCompatActivity {
 
         sharedPreferencesStudy = getSharedPreferences(Const.STUDY_DATA, Context.MODE_PRIVATE);
         sharedPreferencesGame = getSharedPreferences(Const.GAME_DATA, Context.MODE_PRIVATE);
+
+        studyEditor = sharedPreferencesStudy.edit();
+        gameEditor = sharedPreferencesGame.edit();
 
         clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
@@ -69,33 +75,34 @@ public class ResultAtivity extends AppCompatActivity {
         binding.tvCurrentScore.setText(String.valueOf(score));
         Log.e(Const.SCORE, String.valueOf(score));
 
-        sharedPreferencesStudy.edit().putInt(Const.EXP, sharedPreferencesStudy.getInt(Const.EXP, 0) + score);
-        sharedPreferencesStudy.edit().apply();
+        studyEditor.putInt(Const.EXP, sharedPreferencesStudy.getInt(Const.EXP, 0) + score);
+        studyEditor.apply();
 
         int highScore = sharedPreferencesStudy.getInt(Const.HIGH_SCORE, 0);
         if (score > highScore) {
             clickSound.start();
             highScore = score;
-            sharedPreferencesStudy.edit().putInt(Const.HIGH_SCORE, score);
-            sharedPreferencesStudy.edit().apply();
+            studyEditor.putInt(Const.HIGH_SCORE, score);
+            studyEditor.apply();
         }
         binding.tvHighScore.setText(String.valueOf(highScore));
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
         binding.btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, StudyActivity.class));
             finish();
+            startActivity(new Intent(ResultAtivity.this, StudyActivity.class));
         });
 
         int exp = sharedPreferencesStudy.getInt(Const.EXP, score);
         Log.e(Const.EXP, String.valueOf(exp));
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
-            sharedPreferencesStudy.edit().putInt(Const.EXP, 0);
-            sharedPreferencesStudy.edit().apply();
+
             finish();
+            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
+            studyEditor.putInt(Const.EXP, 0);
+            studyEditor.apply();
         });
     }
 
@@ -104,32 +111,34 @@ public class ResultAtivity extends AppCompatActivity {
         binding.tvCurrentScore.setText(String.valueOf(score));
         Log.e(Const.SCORE, String.valueOf(score));
 
-        sharedPreferencesGame.edit().putInt(Const.COIN, sharedPreferencesGame.getInt(Const.COIN, 0) + score);
-        sharedPreferencesGame.edit().apply();
+        gameEditor.putInt(Const.COIN, sharedPreferencesGame.getInt(Const.COIN, 0) + score);
+        gameEditor.apply();
+
+        Log.e("coin", String.valueOf(sharedPreferencesGame.getInt(Const.COIN, 0)));
 
         int highScore = sharedPreferencesGame.getInt(Const.HIGH_SCORE, 0);
         if (score > highScore) {
             highScore = score;
-            sharedPreferencesGame.edit().putInt(Const.HIGH_SCORE, score);
-            sharedPreferencesGame.edit().apply();
+            gameEditor.putInt(Const.HIGH_SCORE, score);
+            gameEditor.apply();
         }
         binding.tvHighScore.setText(String.valueOf(highScore));
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
         binding.btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, GameActivity.class));
             finish();
+            startActivity(new Intent(ResultAtivity.this, GameActivity.class));
         });
 
         int coin = sharedPreferencesGame.getInt(Const.COIN, score);
         Log.e(Const.COIN, String.valueOf(coin));
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
-            sharedPreferencesGame.edit().putInt(Const.COIN, 0);
-            sharedPreferencesGame.edit().apply();
             finish();
+            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
+            gameEditor.putInt(Const.COIN, 0);
+            gameEditor.apply();
         });
     }
 }
