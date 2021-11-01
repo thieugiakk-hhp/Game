@@ -138,10 +138,14 @@ public class MainActivity extends AppCompatActivity {
     public void btnPlayOnClick(View view) {
         clickSound.start();
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
-            SetTimeTextViewNotification("Đói lắm! Đi ăn cơ!");
-        } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 20) {
-            SetTimeTextViewNotification("Mệt lắm! Không đi chơi đâu!");
-        } else {
+            SetTimeTextViewNotification("Đói lắm! Không học đâu!");
+        }
+
+        if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 15) {
+            SetTimeTextViewNotification("Mệt lắm! Không học đâu!");
+        }
+
+        if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) > 10 && sharedPreferences.getInt(Const.PET_HEALTH, 0) > 15) {
             SetBackgroundMusics.SetPauseMusic(mediaPlayer);
             startActivity(new Intent(MainActivity.this, GameActivity.class));
             finish();
