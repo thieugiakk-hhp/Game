@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
-        //CaiNayDeTest();
+        CaiNayDeTest();
         
         SetPetIndexChange();
 
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetIndexDecrease() {
-        timerDecrease = new CountDownTimer(60000, 60000) {
+        timerDecrease = new CountDownTimer(90000, 90000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (sharedPreferences.getInt(Const.PET_HUNGRY, -1) <= 0) {
@@ -274,12 +274,12 @@ public class MainActivity extends AppCompatActivity {
 
         int coin = getIntent().getIntExtra(Const.COIN, 0);
 
-        int hungryIndex = (getIntent().getIntExtra(Const.EXP, 0) / 10) + (getIntent().getIntExtra(Const.COIN, 0) / 5);
-        int healthIndex = (getIntent().getIntExtra(Const.EXP, 0) / 10) + (getIntent().getIntExtra(Const.COIN, 0) / 10);
+        int hungryIndex = Math.round(getIntent().getIntExtra(Const.EXP, 0) / 20) + Math.round(getIntent().getIntExtra(Const.COIN, 0) / 10);
+        int healthIndex = Math.round(getIntent().getIntExtra(Const.EXP, 0) / 20) + Math.round(getIntent().getIntExtra(Const.COIN, 0) / 20);
 
-        float currentLevel = sharedPreferences.getFloat(Const.PET_LEVEL, 1f) + exp;
+        float currentLevel = sharedPreferences.getFloat(Const.PET_LEVEL, 1f) + (exp * 1.5f);
         
-        int currentMoney = sharedPreferences.getInt(Const.PET_MONEY, 0) + coin;
+        int currentMoney = sharedPreferences.getInt(Const.PET_MONEY, 0) + (coin * 2);
         
         int currentHungry = sharedPreferences.getInt(Const.PET_HUNGRY, 0) - hungryIndex;
         int currentHealth = sharedPreferences.getInt(Const.PET_HEALTH, 0) - healthIndex;
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
     
     private void CaiNayDeTest() {
         editor.putFloat(Const.PET_LEVEL, 1.75f);
-        editor.putInt(Const.PET_MONEY, 100000);
+        editor.putInt(Const.PET_MONEY, 1000000);
         editor.putInt(Const.PET_HUNGRY, 100);
         editor.putInt(Const.PET_HEALTH, 100);
         
