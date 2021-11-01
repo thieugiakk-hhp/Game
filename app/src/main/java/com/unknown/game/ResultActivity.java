@@ -1,27 +1,26 @@
 package com.unknown.game;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
-import com.unknown.game.databinding.ActivityResultAtivityBinding;
 import com.unknown.game.helper.Const;
-import com.unknown.game.GameActivity;
 import com.unknown.game.helper.SetFullScreen;
-import com.unknown.game.helper.SetSoundEffects;
 
-public class ResultAtivity extends AppCompatActivity {
+public class ResultActivity extends AppCompatActivity {
 
-    private ActivityResultAtivityBinding binding;
+    private TextView tvCurrentScore;
+    private TextView tvHighScore;
+
+    private Button btnTryAgain;
+    private Button btnContinue;
 
     private SharedPreferences sharedPreferencesStudy;
     private SharedPreferences sharedPreferencesGame;
@@ -34,7 +33,7 @@ public class ResultAtivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_result_ativity);
+        setContentView(R.layout.activity_result);
 
         SetFullScreen.hideSystemUI(getWindow());
 
@@ -44,35 +43,28 @@ public class ResultAtivity extends AppCompatActivity {
         studyEditor = sharedPreferencesStudy.edit();
         gameEditor = sharedPreferencesGame.edit();
 
-        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
+        clickSound = MediaPlayer.create(this, R.raw.sound_click);
+        clickSound.setLooping(false);
+        clickSound.setVolume(1, 1);
+
+        tvCurrentScore = findViewById(R.id.tvCurrentScore);
+        tvHighScore = findViewById(R.id.tvHighScore);
+
+        btnTryAgain = findViewById(R.id.btnTryAgain);
+        btnContinue = findViewById(R.id.btnContinue);
 
         String strActivity = getIntent().getStringExtra(Const.ACTIVITY);
-
+        Log.e("Activity ", strActivity);
         if (strActivity.compareTo("gameActivity") == 0) {
             ResultGameActivity();
-        } else if (strActivity.compareTo("studyActivity") == 0) {
+        } else {
             ResultStudyActivity();
         }
-    }
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                return true;
-            }
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SetFullScreen.hideSystemUI(getWindow());
     }
 
     private void ResultStudyActivity() {
         int score = getIntent().getIntExtra(Const.SCORE, 0);
-        binding.tvCurrentScore.setText(String.valueOf(score));
+        tvCurrentScore.setText(String.valueOf(score));
         Log.e(Const.SCORE, String.valueOf(score));
 
         studyEditor.putInt(Const.EXP, sharedPreferencesStudy.getInt(Const.EXP, 0) + score);
@@ -85,27 +77,32 @@ public class ResultAtivity extends AppCompatActivity {
             studyEditor.putInt(Const.HIGH_SCORE, score);
             studyEditor.apply();
         }
-        binding.tvHighScore.setText(String.valueOf(highScore));
+        tvHighScore.setText(String.valueOf(highScore));
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
-        binding.btnTryAgain.setOnClickListener(view -> {
+        btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, StudyActivity.class));
+            startActivity(new Intent(this, StudyActivity.class));
             finish();
         });
 
         int exp = sharedPreferencesStudy.getInt(Const.EXP, score);
         Log.e(Const.EXP, String.valueOf(exp));
-        binding.btnContinue.setOnClickListener(view -> {
+
+        btnContinue.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(Const.EXP, exp);
+            startActivity(intent);
+            studyEditor.putInt(Const.EXP, 0);
+            studyEditor.apply();
             finish();
         });
     }
 
     private void ResultGameActivity() {
         int score = getIntent().getIntExtra(Const.SCORE, 0);
-        binding.tvCurrentScore.setText(String.valueOf(score));
+        tvCurrentScore.setText(String.valueOf(score));
         Log.e(Const.SCORE, String.valueOf(score));
 
         gameEditor.putInt(Const.COIN, sharedPreferencesGame.getInt(Const.COIN, 0) + score);
@@ -119,34 +116,25 @@ public class ResultAtivity extends AppCompatActivity {
             gameEditor.putInt(Const.HIGH_SCORE, score);
             gameEditor.apply();
         }
-        binding.tvHighScore.setText(String.valueOf(highScore));
+        tvHighScore.setText(String.valueOf(highScore));
         Log.e(Const.HIGH_SCORE, String.valueOf(highScore));
 
-        binding.btnTryAgain.setOnClickListener(view -> {
+        btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, GameActivity.class));
+            startActivity(new Intent(this, GameActivity.class));
             finish();
         });
 
         int coin = sharedPreferencesGame.getInt(Const.COIN, score);
         Log.e(Const.COIN, String.valueOf(coin));
-        binding.btnContinue.setOnClickListener(view -> {
+        btnContinue.setOnClickListener(view -> {
             clickSound.start();
-            startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(Const.COIN, coin);
+            startActivity(intent);
+            gameEditor.putInt(Const.COIN, 0);
+            gameEditor.apply();
             finish();
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        gameEditor.putInt(Const.COIN, 0);
-        gameEditor.apply();
-
-        studyEditor.putInt(Const.EXP, 0);
-        studyEditor.apply();
-
-        Log.e("onDestroy", "Đã finish");
     }
 }

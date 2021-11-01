@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.unknown.game.helper.Const;
-import com.unknown.game.helper.SetBackgroundMusics;
 import com.unknown.game.helper.SetFullScreen;
-import com.unknown.game.helper.SetSoundEffects;
+
+import java.util.Set;
 
 public class StudyActivity extends AppCompatActivity {
 
@@ -46,11 +46,8 @@ public class StudyActivity extends AppCompatActivity {
     private TextView tvTap;
 
     private ConstraintLayout playLayout;
-    private ConstraintLayout endGameLayout;
 
     private int score;
-
-    private SharedPreferences sharedPreferences;
 
     private boolean music;
 
@@ -65,7 +62,7 @@ public class StudyActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow());
 
-        sharedPreferences = getSharedPreferences("SCORE", MODE_PRIVATE);
+        SetSound();
 
         tvCalculation = findViewById(R.id.tvCalculation);
         tvScore = findViewById(R.id.tvScore);
@@ -77,9 +74,6 @@ public class StudyActivity extends AppCompatActivity {
         btnFalse = findViewById(R.id.btnFalse);
 
         music = true;
-        btnSetVolume = findViewById(R.id.btnSetVolume);
-
-        score = 0;
 
         btnTrue.setOnClickListener(onClickListener);
         btnFalse.setOnClickListener(onClickListener);
@@ -87,10 +81,10 @@ public class StudyActivity extends AppCompatActivity {
         tvTap = findViewById(R.id.tvTap);
         tvTap.setOnClickListener(tapToStart);
 
+        btnSetVolume = findViewById(R.id.btnSetVolume);
         btnSetVolume.setOnClickListener(setVolumeOnClickListener);
 
-        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(StudyActivity.this, R.raw.sound_tiktok, 100);
-        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
+        score = 0;
     }
 
     private void initFreakingMath() {
@@ -106,21 +100,24 @@ public class StudyActivity extends AppCompatActivity {
             timer.cancel();
         }
 
-        timer = new CountDownTimer(7000,1000) {
+        mediaPlayer.start();
+
+        timer = new CountDownTimer(5000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long s = millisUntilFinished / 1000;
                 progressBarLeft.setProgress((int) s);
                 progressBarRight.setProgress((int) s);
-
-                mediaPlayer.start();
             }
 
             @Override
             public void onFinish() {
                 timer.cancel();
-                SetBackgroundMusics.SetPauseMusic(mediaPlayer);
-                SetEndGame();
+                Intent intent = new Intent(StudyActivity.this, ResultActivity.class);
+                intent.putExtra(Const.SCORE, score);
+                intent.putExtra(Const.ACTIVITY, "studyActivity");
+                startActivity(intent);
+                finish();
             }
         };
 
@@ -131,6 +128,9 @@ public class StudyActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            clickSound.start();
+            mediaPlayer.pause();
+
             // TODO Auto-generated method stub
             String tag = String.valueOf(view.getTag());
             boolean b = Boolean.parseBoolean(tag);
@@ -140,7 +140,7 @@ public class StudyActivity extends AppCompatActivity {
                 tvScore.setText(String.valueOf(score));
                 initFreakingMath();
             } else {
-                SetEndGame();
+                timer.onFinish();
             }
         }
     };
@@ -165,42 +165,45 @@ public class StudyActivity extends AppCompatActivity {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_mute));
                 music = !music;
                 Log.e("music", String.valueOf(music));
-                SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
-                SetSoundEffects.SetVolume(clickSound, 0, 0);
+                mediaPlayer.setVolume(0, 0);
+                clickSound.setVolume(0, 0);
             } else {
                 btnSetVolume.setBackground(getDrawable(R.drawable.ic_volume));
                 music = !music;
                 Log.e("music", String.valueOf(music));
-                SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
-                SetSoundEffects.SetVolume(clickSound, 0, 0);
+                mediaPlayer.setVolume(1, 1);
+                clickSound.setVolume(1, 1);
             }
         }
     };
 
-    private void SetEndGame() {
-        Intent intent = new Intent(this, ResultAtivity.class);
-        intent.putExtra(Const.SCORE, score);
-        intent.putExtra(Const.ACTIVITY, "studyActivity");
-        startActivity(intent);
-        finish();
+    private void SetSound() {
+        mediaPlayer = MediaPlayer.create(this, R.raw.sound_tiktok);
+        clickSound = MediaPlayer.create(this, R.raw.sound_click);
+
+        mediaPlayer.setLooping(true);
+        clickSound.setLooping(false);
+
+        mediaPlayer.setVolume(1, 1);
+        clickSound.setVolume(1, 1);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
         SetFullScreen.hideSystemUI(getWindow());
+        mediaPlayer.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 }

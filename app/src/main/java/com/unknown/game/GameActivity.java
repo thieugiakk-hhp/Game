@@ -1,5 +1,4 @@
 package com.unknown.game;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -15,14 +14,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import com.unknown.game.R;
+
 import com.unknown.game.databinding.ActivityGameBinding;
 import com.unknown.game.helper.Const;
-import com.unknown.game.helper.SetBackgroundMusics;
 import com.unknown.game.helper.SetFullScreen;
-import com.unknown.game.helper.SharePreferenceUtils;
-import com.unknown.game.ResultAtivity;
-import com.unknown.game.model.Rocket;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,7 +66,9 @@ public class GameActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow());
 
-        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.game_music, 100);
+        mediaPlayer = MediaPlayer.create(this, R.raw.game_music);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(1, 1);
         mediaPlayer.start();
 
         defaultPosition();
@@ -96,20 +94,20 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         SetFullScreen.hideSystemUI(getWindow());
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     public void launchNewActivity(Context context, String packageName){
@@ -218,7 +216,7 @@ public class GameActivity extends AppCompatActivity {
             no2X = -20;
             timer.cancel();
             timer = null;
-            Intent intent = new Intent(GameActivity.this, ResultAtivity.class);
+            Intent intent = new Intent(GameActivity.this, ResultActivity.class);
             intent.putExtra(Const.SCORE, score);
             intent.putExtra(Const.ACTIVITY, "gameActivity");
             startActivity(intent);

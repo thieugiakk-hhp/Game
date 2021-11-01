@@ -17,9 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unknown.game.helper.Const;
-import com.unknown.game.helper.SetBackgroundMusics;
 import com.unknown.game.helper.SetFullScreen;
-import com.unknown.game.helper.SetSoundEffects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,10 +53,8 @@ public class MainActivity extends AppCompatActivity {
         tvNotificationStt = findViewById(R.id.tvNotificationStt);
         music = true;
 
-        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
+        SetSound();
         mediaPlayer.start();
-
-        clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
         //CaiNayDeTest();
         
@@ -72,20 +68,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.start();
         SetFullScreen.hideSystemUI(getWindow());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     public void btnIn4OnClick(View view) {
@@ -105,16 +101,16 @@ public class MainActivity extends AppCompatActivity {
             view.setBackground(getDrawable(R.drawable.ic_mute));
             music = !music;
             Log.e("music", String.valueOf(music));
-            SetBackgroundMusics.SetVolume(mediaPlayer, 0, 0);
-            SetSoundEffects.SetVolume(clickSound, 0, 0);
+            mediaPlayer.setVolume(0, 0);
+            clickSound.setVolume(0, 0);
         }
 
         else if (!music) {
             view.setBackground(getDrawable(R.drawable.ic_volume));
             music = !music;
             Log.e("music", String.valueOf(music));
-            SetBackgroundMusics.SetVolume(mediaPlayer, 1, 1);
-            SetSoundEffects.SetVolume(clickSound, 1, 1);
+            mediaPlayer.setVolume(1, 1);
+            clickSound.setVolume(1, 1);
         }
     }
 
@@ -129,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) > 10 && sharedPreferences.getInt(Const.PET_HEALTH, 0) > 15) {
-            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            mediaPlayer.pause();
             startActivity(new Intent(MainActivity.this, StudyActivity.class));
             finish();
         }
@@ -146,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) > 10 && sharedPreferences.getInt(Const.PET_HEALTH, 0) > 15) {
-            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+            mediaPlayer.pause();
             startActivity(new Intent(MainActivity.this, GameActivity.class));
             finish();
         }
@@ -292,6 +288,17 @@ public class MainActivity extends AppCompatActivity {
         editor.putInt(Const.PET_HEALTH, currentHealth);
 
         editor.apply();
+    }
+
+    private void SetSound() {
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        clickSound = MediaPlayer.create(this, R.raw.sound_click);
+
+        mediaPlayer.setLooping(true);
+        clickSound.setLooping(false);
+
+        mediaPlayer.setVolume(1, 1);
+        clickSound.setVolume(1, 1);
     }
     
     private void CaiNayDeTest() {

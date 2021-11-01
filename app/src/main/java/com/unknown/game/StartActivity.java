@@ -18,9 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.unknown.game.helper.Const;
-import com.unknown.game.helper.SetBackgroundMusics;
 import com.unknown.game.helper.SetFullScreen;
-import com.unknown.game.helper.SetSoundEffects;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -35,27 +33,27 @@ public class StartActivity extends AppCompatActivity {
 
         SetFullScreen.hideSystemUI(getWindow()); //Set Fullscreen_Hide System UI
 
-        mediaPlayer = SetBackgroundMusics.SetBackgroundMusic(this, R.raw.background_music, 100);
+        SetSound();
         mediaPlayer.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SetBackgroundMusics.SetStartMusic(mediaPlayer);
+        mediaPlayer.start();
         SetFullScreen.hideSystemUI(getWindow());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
+        mediaPlayer.pause();
 
         Log.e("onDestroy", "Đã finish");
     }
@@ -83,27 +81,36 @@ public class StartActivity extends AppCompatActivity {
                         editor.putString(Const.PET_NAME, petName);
                         editor.apply();
 
-                        clickSound = SetSoundEffects.SetClickSound(StartActivity.this, R.raw.sound_click, 100);
                         clickSound.start();
+                        //mediaPlayer.pause();
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
                         intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
                         startActivity(intent);
-                        SetBackgroundMusics.SetPauseMusic(mediaPlayer);
                         view.setVisibility(View.VISIBLE);
-                        finish();
+                        //finish();
                     }
                 }
             });
         }
         else {
-            clickSound = SetSoundEffects.SetClickSound(StartActivity.this, R.raw.sound_click, 100);
             clickSound.start();
+            //mediaPlayer.pause();
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
             intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
             startActivity(intent);
-            SetBackgroundMusics.SetPauseMusic(mediaPlayer);
             view.setVisibility(View.VISIBLE);
-            finish();
+            //finish();
         }
+    }
+
+    private void SetSound() {
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        clickSound = MediaPlayer.create(this, R.raw.sound_click);
+
+        mediaPlayer.setLooping(true);
+        clickSound.setLooping(false);
+
+        mediaPlayer.setVolume(1, 1);
+        clickSound.setVolume(1, 1);
     }
 }
