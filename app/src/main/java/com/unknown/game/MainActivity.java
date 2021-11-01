@@ -2,14 +2,18 @@ package com.unknown.game;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unknown.game.helper.Const;
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean music;
 
     private TextView tvNotificationStt;
+
+    private ImageView imgDowsie;
 
     private CountDownTimer timerNotification;
 
@@ -54,9 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
         clickSound = SetSoundEffects.SetClickSound(this, R.raw.sound_click, 100);
 
-        CaiNayDeTest();
+        //CaiNayDeTest();
         
         SetPetIndexChange();
+
+        imgDowsie = findViewById(R.id.imgDowsie);
+        AnimationDrawable animationDrawable = (AnimationDrawable) imgDowsie.getDrawable();
+        animationDrawable.start();
     }
 
     @Override
@@ -112,9 +122,13 @@ public class MainActivity extends AppCompatActivity {
         clickSound.start();
         if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) <= 10) {
             SetTimeTextViewNotification("Đói lắm! Không học đâu!");
-        } else if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 15) {
+        }
+
+        if (sharedPreferences.getInt(Const.PET_HEALTH, 0) <= 15) {
             SetTimeTextViewNotification("Mệt lắm! Không học đâu!");
-        } else {
+        }
+
+        if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) > 10 && sharedPreferences.getInt(Const.PET_HEALTH, 0) > 15) {
             SetBackgroundMusics.SetPauseMusic(mediaPlayer);
             startActivity(new Intent(MainActivity.this, StudyActivity.class));
             finish();
@@ -137,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
     public void btnEatingOnClick(View view) {
         clickSound.start();
 
-        timerNotification.onFinish();
-
         if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 500) {
             if (sharedPreferences.getInt(Const.PET_HUNGRY, 0) < 70) {
                 if (sharedPreferences.getInt(Const.PET_HUNGRY, 100) + 50 > 100) {
@@ -160,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnHealingOnClick(View view) {
         clickSound.start();
+
         if (sharedPreferences.getInt(Const.PET_MONEY, 0) >= 1000) {
             if (sharedPreferences.getInt(Const.PET_HEALTH, 0) < 70) {
                 if (sharedPreferences.getInt(Const.PET_HEALTH, 100) + 50 > 100) {
