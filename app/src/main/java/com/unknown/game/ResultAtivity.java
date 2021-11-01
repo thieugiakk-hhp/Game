@@ -90,18 +90,15 @@ public class ResultAtivity extends AppCompatActivity {
 
         binding.btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            finish();
             startActivity(new Intent(ResultAtivity.this, StudyActivity.class));
+            finish();
         });
 
         int exp = sharedPreferencesStudy.getInt(Const.EXP, score);
         Log.e(Const.EXP, String.valueOf(exp));
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
-
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.EXP, exp));
-            studyEditor.putInt(Const.EXP, 0);
-            studyEditor.apply();
             finish();
         });
     }
@@ -127,8 +124,8 @@ public class ResultAtivity extends AppCompatActivity {
 
         binding.btnTryAgain.setOnClickListener(view -> {
             clickSound.start();
-            finish();
             startActivity(new Intent(ResultAtivity.this, GameActivity.class));
+            finish();
         });
 
         int coin = sharedPreferencesGame.getInt(Const.COIN, score);
@@ -136,8 +133,6 @@ public class ResultAtivity extends AppCompatActivity {
         binding.btnContinue.setOnClickListener(view -> {
             clickSound.start();
             startActivity(new Intent(ResultAtivity.this, MainActivity.class).putExtra(Const.COIN, coin));
-            gameEditor.putInt(Const.COIN, 0);
-            gameEditor.apply();
             finish();
         });
     }
@@ -145,6 +140,13 @@ public class ResultAtivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        gameEditor.putInt(Const.COIN, 0);
+        gameEditor.apply();
+
+        studyEditor.putInt(Const.EXP, 0);
+        studyEditor.apply();
+
         Log.e("onDestroy", "Đã finish");
     }
 }
