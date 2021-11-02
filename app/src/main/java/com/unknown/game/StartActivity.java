@@ -87,6 +87,8 @@ public class StartActivity extends AppCompatActivity {
                         intent.putExtra(Const.PET_NAME, sharedPreferences.getString(Const.PET_NAME, ""));
                         startActivity(intent);
                         view.setVisibility(View.VISIBLE);
+                        edtName.setVisibility(View.INVISIBLE);
+                        btnOK.setVisibility(View.INVISIBLE);
                         //finish();
                     }
                 }
