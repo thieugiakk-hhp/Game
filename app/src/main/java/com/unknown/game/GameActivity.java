@@ -110,16 +110,6 @@ public class GameActivity extends AppCompatActivity {
         mediaPlayer.pause();
     }
 
-    public void launchNewActivity(Context context, String packageName){
-        Intent intent = null;
-        if (intent == null){
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(packageName)));
-        }
-        else {
-            context.startActivity(intent);
-        }
-    }
-
     private void changePos() {
 
         checkHit();

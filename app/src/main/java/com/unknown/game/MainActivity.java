@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
         SetSound();
         mediaPlayer.start();
-
-        //CaiNayDeTest();
         
         SetPetIndexChange();
 
@@ -204,13 +202,13 @@ public class MainActivity extends AppCompatActivity {
             editor.putFloat(Const.PET_LEVEL, 1f);
         }
         if (sharedPreferences.getInt(Const.PET_MONEY, -1) == -1) {
-            editor.putInt(Const.PET_MONEY, 10000);
+            editor.putInt(Const.PET_MONEY, 20000);
         }
         if (sharedPreferences.getInt(Const.PET_HUNGRY, -1) == -1) {
-            editor.putInt(Const.PET_HUNGRY, 75);
+            editor.putInt(Const.PET_HUNGRY, 100);
         }
         if (sharedPreferences.getInt(Const.PET_HEALTH, -1) == -1) {
-            editor.putInt(Const.PET_HEALTH, 75);
+            editor.putInt(Const.PET_HEALTH, 100);
         }
 
         editor.apply();
